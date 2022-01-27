@@ -1,0 +1,43 @@
+#----------------------------------------------------------------------
+#
+#	Author:		 hl1mnu@gmail.com
+#	Date:		 2008/08/30
+#
+#
+#----------------------------------------------------------------------
+
+TARGET	= TCSD
+OBJS	= TCSD.rel
+#----------------------------------------------------------------------
+
+SDCC	= C:\Tools\sdcc
+CC		= $(SDCC)\bin\sdcc
+LD		= $(SDCC)\bin\sdcc
+HC		= OH51
+
+C_OPTS	= -mmcs51  -I$(SDCC)\share\sdcc\include -L$(SDCC)\share\sdcc\lib
+MFLAGS = --model-small
+CFLAGS = $(C_OPTS) $(MFLAGS)
+LFLAGS = --code-loc 0x0000
+#--xram-loc 0x4000 
+
+.SUFFIXES:	.rel
+
+%.rel: %.C
+	$(CC) $(CFLAGS) -c $<
+
+c:	$(OBJS)
+
+all: $(TARGET).ihx
+
+$(TARGET).ihx:	$(OBJS)
+	$(LD) $(MFLAGS) $(LFLAGS) $(OBJS)
+
+
+clean:
+	-@if exist $(TARGET).ABS del $(TARGET).ABS
+	-@if exist $(TARGET).ihx del $(TARGET).ihx
+	-@if exist $(TARGET).MAP del $(TARGET).MAP
+	-@for %f in ($(OBJS)) do @if exist %f del %f
+	-@for %f in ($(OBJS:.rel=.err)) do @if exist %f del %f
+	-@for %f in ($(OBJS:.rel=.lst)) do @if exist %f del %f
